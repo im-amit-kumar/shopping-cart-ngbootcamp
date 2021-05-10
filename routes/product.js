@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
 const Review = require('../models/review');
-const {isLoggedIn} = require('../middleware');
+const { isLoggedIn } = require('../middleware');
 
 
 // Display all the products
@@ -20,14 +20,14 @@ router.get('/products', async(req, res) => {
 
 
 // Get the form for new product
-router.get('/products/new', isLoggedIn, (req, res) => {
+router.get('/products/new',isLoggedIn, (req, res) => {
 
     res.render('products/new');
 })
 
 
 // Create New Product
-router.post('/products', isLoggedIn, async(req, res) => {
+router.post('/products',isLoggedIn,async(req, res) => {
 
     try {
         await Product.create(req.body.product);
@@ -47,23 +47,20 @@ router.get('/products/:id', async(req, res) => {
     try {
         const product=await Product.findById(req.params.id).populate('reviews');
         res.render('products/show', { product});
-        
     }
     catch (e) {
         console.log(e.message);
         req.flash('error', 'Cannot find this Product');
         res.redirect('/error');
-        
     }
 })
 
 // Get the edit form
-router.get('/products/:id/edit' , isLoggedIn, async(req, res) => {
+router.get('/products/:id/edit',isLoggedIn,async(req, res) => {
 
     try {
         const product=await Product.findById(req.params.id);
         res.render('products/edit',{product});
-        
     }
     catch (e) {
         console.log(e.message);
@@ -73,7 +70,7 @@ router.get('/products/:id/edit' , isLoggedIn, async(req, res) => {
 })
 
 // Upadate the particular product
-router.patch('/products/:id' , isLoggedIn, async(req, res) => {
+router.patch('/products/:id',isLoggedIn,async(req, res) => {
     
     try {
         await Product.findByIdAndUpdate(req.params.id, req.body.product);
@@ -89,7 +86,7 @@ router.patch('/products/:id' , isLoggedIn, async(req, res) => {
 
 
 // Delete a particular product
-router.delete('/products/:id',isLoggedIn, async (req, res) => {
+router.delete('/products/:id',isLoggedIn,async (req, res) => {
 
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -108,10 +105,12 @@ router.delete('/products/:id',isLoggedIn, async (req, res) => {
 
 // Creating a New Comment on a Product
 
-router.post('/products/:id/review', isLoggedIn, async (req, res) => {
+router.post('/products/:id/review',isLoggedIn,async (req, res) => {
     
     try {
         const product = await Product.findById(req.params.id);
+
+
         const review = new Review({
             user: req.user.username,
             ...req.body
